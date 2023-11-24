@@ -3,6 +3,10 @@ package Lab10;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 public class Task1 extends JFrame {
@@ -23,10 +27,17 @@ public class Task1 extends JFrame {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        inputFieldFamily.addFocusListener(new TextFieldFocusListener());
-        inputFieldPhoneNumber.addFocusListener(new TextFieldFocusListener());
-        outputFieldCount.setEditable(false);
+        inputFieldFamily.getDocument().addDocumentListener((SimpleDocumentListener) e -> {
+            boolean fieldsNotEmpty = !inputFieldFamily.getText().isEmpty() &&
+                    !inputFieldPhoneNumber.getText().isEmpty();
+            executeButton.setEnabled(fieldsNotEmpty);
+        });
+        inputFieldPhoneNumber.getDocument().addDocumentListener((SimpleDocumentListener) e -> {
+            boolean fieldsNotEmpty = !inputFieldFamily.getText().isEmpty() &&
+                    !inputFieldPhoneNumber.getText().isEmpty();
+            executeButton.setEnabled(fieldsNotEmpty);
+        });
+        outputFieldCount.setEnabled(false);
 
         setSize(400, 270);
         inputFieldFamily.setPreferredSize(new Dimension(200, 25));
@@ -86,20 +97,6 @@ public class Task1 extends JFrame {
             }
         };
         addWindowListener(wndCloser);
-    }
-
-    private class TextFieldFocusListener implements FocusListener {
-        @Override
-        public void focusGained(FocusEvent e) {
-        }
-
-        @Override
-        public void focusLost(FocusEvent e) {
-            // Проверка содержимого текстовых полей и активация/деактивация кнопки
-            boolean fieldsNotEmpty = !inputFieldFamily.getText().isEmpty() &&
-                    !inputFieldPhoneNumber.getText().isEmpty();
-            executeButton.setEnabled(fieldsNotEmpty);
-        }
     }
 
     public static void main(String[] args) {
